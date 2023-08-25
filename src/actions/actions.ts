@@ -1,7 +1,6 @@
 "use server"
 
 import cloudinary from "cloudinary"
-import { revalidatePath } from "next/cache"
 
 export async function setAsFavoriteAction(
   publicId: string,
@@ -12,7 +11,9 @@ export async function setAsFavoriteAction(
   } else {
     await cloudinary.v2.uploader.add_tag("favorite", [publicId])
   }
+}
 
-  await new Promise((resolve) => setTimeout(resolve, 1500))
-  revalidatePath("/gallery")
+export async function setAlbumAction(album: string, publicId: string) {
+  await cloudinary.v2.api.create_folder(album)
+  cloudinary.v2.uploader.rename(publicId, `${album}/${publicId}`)
 }
